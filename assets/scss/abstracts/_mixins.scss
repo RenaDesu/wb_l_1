@@ -1,0 +1,52 @@
+@mixin object-fit($fit: fill, $position: null) {
+    -o-object-fit: $fit;
+    object-fit: $fit;
+
+    @if $position {
+        font-family: "object-fit: #{$fit}; object-position: #{$position}";
+
+        -o-object-position: $position;
+        object-position: $position;
+    }
+
+    @else {
+        font-family: "object-fit: #{$fit}";
+    }
+}
+
+@mixin list {
+    padding: 0;
+    margin: 0;
+}
+
+@mixin visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+}
+
+@mixin title-small {
+    font-size: rem($title-size-small);
+    line-height: rem(28px);
+    font-weight: $font-weight-bold;
+    letter-spacing: rem(-0.2px);
+}
+
+@mixin title-medium {
+    font-size: rem($title-size-medium);
+    line-height: rem(32px);
+    font-weight: $font-weight-bold;
+    letter-spacing: rem(-0.24px);
+}
+
+@mixin title-big {
+    font-size: rem($title-size-big);
+    line-height: rem(36px);
+    font-weight: $font-weight-bold;
+    letter-spacing: rem(-0.28px);
+}

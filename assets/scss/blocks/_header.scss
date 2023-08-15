@@ -1,0 +1,13 @@
+.header {
+    height: rem($height-header-mobile);
+
+    position: relative;
+
+    color: $white;
+
+    background-color: $daisy-bush;
+
+    @media #{$screen-tablet} {
+        height: rem($height-header-desktop);
+    }
+}

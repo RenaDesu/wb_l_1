@@ -1,0 +1,9 @@
+.footer {
+    position: relative;
+    
+    font-size: rem($font-size-small);
+    line-height: rem(16px);
+
+    color: rgba(255, 255, 255, 0.70);
+    background-color: $daisy-bush;
+}
