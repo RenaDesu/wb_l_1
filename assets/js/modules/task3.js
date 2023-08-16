@@ -1,4 +1,4 @@
-let MathX = (function () {
+const MathX = (function () {
 
     return {
         /*
