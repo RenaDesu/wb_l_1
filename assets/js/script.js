@@ -17,3 +17,4 @@ import {strangeNumber} from './modules/task2';
 import {MathX} from './modules/task3';
 import {getNoun} from './modules/task4';
 import {getObj} from './modules/task5';
+import {sortObj} from './modules/task6'
