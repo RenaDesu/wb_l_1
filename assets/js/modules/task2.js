@@ -21,7 +21,6 @@ function strangeNumber(num) {
 }
 
 // результат (раскомментировать для проверки):
-
 /*
 strangeNumber(28);
 strangeNumber(6);
