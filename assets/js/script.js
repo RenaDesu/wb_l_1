@@ -22,3 +22,4 @@ import {callFunction} from './modules/task7';
 import {getCallFunction} from './modules/task8';
 import {returnFunc} from './modules/task11';
 import {book} from './modules/task12';
+import {Shape, Rectangle, Triangle, Circle} from './modules/task13';
