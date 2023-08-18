@@ -26,3 +26,4 @@ import {Shape, Rectangle, Triangle, Circle} from './modules/task13';
 import {getImage} from './modules/task14';
 import {asyncFunc} from './modules/task15';
 import {dates} from './modules/task16';
+import {initAddressSuggestion, debounced} from './modules/task17';
