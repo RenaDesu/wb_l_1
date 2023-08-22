@@ -1,0 +1,19 @@
+.form {
+    width: 50%;
+     padding-bottom: rem(20px);
+
+    display: flex;
+    flex-direction: column;
+    row-gap: rem(10px);
+   
+    &__buttons {
+        display: flex;
+        column-gap: rem(20px);
+    }
+
+    &__label,
+    &__input,
+    &__select {
+        cursor: pointer;
+    }
+}

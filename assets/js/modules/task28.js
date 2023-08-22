@@ -12,22 +12,22 @@ const productListFragment = document.createDocumentFragment();
 const showProductButton = document.querySelector('[data-show]');
 
 const PRODUCT_LIST_DATA = [{
-        imgUrl: './public/images/pic1.png',
-        imgUrl2x: './public/images/pic1@2x.png',
+        imgUrl: 'images/pic1.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1.png'
+        imgUrl2x: 'images/pic1@2x.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1@2x.png'
         title: 'Футболка 1',
         color: 'белый',
         size: '56',
     },
     {
-        imgUrl: './public/images/pic1.png',
-        imgUrl2x: './public/images/pic1@2x.png',
+        imgUrl: 'images/pic1.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1.png'
+        imgUrl2x: 'images/pic1@2x.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1@2x.png'
         title: 'Футболка 2',
         color: 'черный',
         size: '52',
     },
     {
-        imgUrl: './public/images/pic1.png',
-        imgUrl2x: './public/images/pic1@2x.png',
+        imgUrl: 'images/pic1.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1.png'
+        imgUrl2x: 'images/pic1@2x.png',//для развертывания проекта локально нужно поменять ссылку на './public/images/pic1@2x.png'
         title: 'Футболка 3',
         color: 'синий',
         size: '48',

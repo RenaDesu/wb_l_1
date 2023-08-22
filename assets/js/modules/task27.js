@@ -3,7 +3,7 @@ const slider = document.querySelector('.slider');
 const before = slider.querySelector('.slider__before');
 const beforeImage = before.querySelector('.slider__img');
 const changeBar = slider.querySelector('.slider__change-bar');
-const sliderContainer = document.querySelector('.container__block');
+const sliderContainer = document.querySelector('.container__mini-block');
 
 //анимация тултипа
 function onTooltipClick(evt) {

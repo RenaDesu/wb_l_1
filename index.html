@@ -48,25 +48,48 @@
 
                 <h3>Пример анимации элемента 2, 27 задача</h3>
                 <p class="description">Нужно потянуть ползунок вправо, затем влево</p>
-                <div class="page__slider">
-                    <div class="slider">
-                        <div class="slider__before">
-                            <img class="slider__img" src="./public/images/slider-before-tablet.png"
-                                srcset="./public/images/slider-before-tablet@2x.png 2x" alt="Изображение кота до.">
-                        </div>
-                        <div class="slider__after">
-                            <img class="slider__img" src="./public/images/slider-after-tablet.png"
-                                srcset="./public/images/slider-after-tablet@2x.png 2x" alt="Изображение кота после.">
-                        </div>
-                        <div class="slider__change-bar">
-                            <div class="slider__change-bar-arrows">
+                <div class="container__mini-block">
+                    <div class="page__slider">
+                        <div class="slider">
+                            <div class="slider__before">
+                                <img class="slider__img" src="./public/images/slider-before-tablet.png"
+                                    srcset="./public/images/slider-before-tablet@2x.png 2x" alt="Изображение кота до.">
+                            </div>
+                            <div class="slider__after">
+                                <img class="slider__img" src="./public/images/slider-after-tablet.png"
+                                    srcset="./public/images/slider-after-tablet@2x.png 2x"
+                                    alt="Изображение кота после.">
+                            </div>
+                            <div class="slider__change-bar">
+                                <div class="slider__change-bar-arrows">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <h3>Нажмите на кнопку ниже, 28 задача</h3>
-                <button class="button" style="align-self: flex-start;" type="button" data-show>Добавить продукты</button>
+                <button class="button" style="align-self: flex-start;" type="button" data-show>Добавить
+                    продукты</button>
                 <ul class="missing__list" data-product-list></ul>
+
+                <h3>Заполните форму и нажмите "Выбрать", 29 задача</h3>
+                <form class="form" data-form enctype="multipart/form-data" autocomplete="off">
+                    <label class="form__label" for="name">Имя</label>
+                    <input class="form__input" type="text" name="name" id="name">
+                    <label class="form__label" for="surename">Фамилия</label>
+                    <input class="form__input" type="text" name="surename" id="surename">
+                    <label class="form__label" for="favorite">Любимый продукт</label>
+                    <select class="form__select" name="favorite" id="favorite" data-select>
+                        <option value="fish">рыба</option>
+                        <option value="chicken">курица</option>
+                        <option value="beaf">говядина</option>
+                    </select>
+                    <div class="form__buttons">
+                        <button class="button" type="submit" id="submit">Выбрать</button>
+                        <button class="button" type="reset" id="reset">Очистить</button>
+                    </div>
+                </form>
             </div>
         </div>
     </main>
@@ -78,25 +101,25 @@
     </footer>
 
     <template id="product-list-template">
-    <li class="missing__item card card--missing">
-        <div class="card__img">
-            <img class="card__img-pic card__img-pic--missing" src="" srcset="" alt="Изображение товара">
-        </div>
-        <div class="card__content">
-            <p class="card__title">
-            </p>
-            <div class="card__characteristics">
-                <p class="card__color">
-                    Цвет:
-                    <span class="card__color-value"></span>
-                </p>
-                <p class="card__size">
-                    <span class="card__size-title">Размер:</span>
-                    <span class="card__size-value"></span>
-                </p>
+        <li class="missing__item card card--missing">
+            <div class="card__img">
+                <img class="card__img-pic card__img-pic--missing" src="" srcset="" alt="Изображение товара">
             </div>
-        </div>
-    </li>
+            <div class="card__content">
+                <p class="card__title">
+                </p>
+                <div class="card__characteristics">
+                    <p class="card__color">
+                        Цвет:
+                        <span class="card__color-value"></span>
+                    </p>
+                    <p class="card__size">
+                        <span class="card__size-title">Размер:</span>
+                        <span class="card__size-value"></span>
+                    </p>
+                </div>
+            </div>
+        </li>
     </template>
 
     <script src="./public/js/script.js" type="module"></script>
