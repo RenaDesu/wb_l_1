@@ -63,3 +63,9 @@ button {
         outline: none;
     }
 }
+
+h1, h2, h3 {
+    &:not([class]) {
+        margin: 0;
+    }
+}

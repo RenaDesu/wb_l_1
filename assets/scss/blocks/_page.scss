@@ -17,4 +17,11 @@
     &__heading {
         @include visually-hidden;
     }
+
+    &__slider {
+        position: relative;
+        width: 425px;
+        height: 377px;
+        margin-bottom: 50px;
+    }
 }

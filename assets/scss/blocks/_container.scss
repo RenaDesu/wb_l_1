@@ -72,4 +72,10 @@
         padding-left: rem($gap-container);
         padding-right: rem($gap-container);
     }
+
+    &__block {
+        display: flex;
+        flex-direction: column;
+        row-gap: rem(20px);
+    }
 }

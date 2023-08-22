@@ -22,8 +22,49 @@
 
     <main class="page__content content">
         <div class="container" data-container>
-            <div class="img-container"> </div>
-            <label for="address">Адрес: <input type="text" id="address" style="width: 500px;"> </label>
+            <div class="container__block">
+                <div class="img-container"> </div>
+                <h3>Поле ввода адреса с функцией геокодинга, 17 задача</h3>
+                <label for="address">Адрес: <input type="text" id="address" style="width: 500px;"> </label>
+
+                <h3>Пример анимации элемента 1, 27 задача</h3>
+                <p class="description">
+                    Пример анимации элемента
+                    <span data-tooltip="Анимированный тултип"
+                        class="description__highlight description__highlight--has-tooltip">
+                        "нажми на меня"
+                    </span>
+                    для 27й
+                    <span data-tooltip="Анимированный тултип 2"
+                        class="description__highlight description__highlight--has-tooltip">
+                        "нажми на меня"
+                    </span>
+                    задачи. По нажатию на <span data-tooltip="Анимированный тултип 3"
+                        class="description__highlight description__highlight--has-tooltip">"нажми на меня"</span>
+                    происходит анимация псевдоэлемента ::after у span
+                    (его текст увеличивается и меняется видимость, после повторного нажатия текст уменьшается
+                    и постепенно менется видимость, он исчезает).
+                </p>
+
+                <h3>Пример анимации элемента 2, 27 задача</h3>
+                <p class="description">Нужно потянуть ползунок вправо, затем влево</p>
+                <div class="page__slider">
+                    <div class="slider">
+                        <div class="slider__before">
+                            <img class="slider__img" src="./public/images/slider-before-tablet.png"
+                                srcset="./public/images/slider-before-tablet@2x.png 2x" alt="Изображение кота до.">
+                        </div>
+                        <div class="slider__after">
+                            <img class="slider__img" src="./public/images/slider-after-tablet.png"
+                                srcset="./public/images/slider-after-tablet@2x.png 2x" alt="Изображение кота после.">
+                        </div>
+                        <div class="slider__change-bar">
+                            <div class="slider__change-bar-arrows">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
