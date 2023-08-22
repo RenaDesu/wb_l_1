@@ -64,6 +64,9 @@
                         </div>
                     </div>
                 </div>
+                <h3>Нажмите на кнопку ниже, 28 задача</h3>
+                <button class="button" style="align-self: flex-start;" type="button" data-show>Добавить продукты</button>
+                <ul class="missing__list" data-product-list></ul>
             </div>
         </div>
     </main>
@@ -73,6 +76,28 @@
             Footer
         </div>
     </footer>
+
+    <template id="product-list-template">
+    <li class="missing__item card card--missing">
+        <div class="card__img">
+            <img class="card__img-pic card__img-pic--missing" src="" srcset="" alt="Изображение товара">
+        </div>
+        <div class="card__content">
+            <p class="card__title">
+            </p>
+            <div class="card__characteristics">
+                <p class="card__color">
+                    Цвет:
+                    <span class="card__color-value"></span>
+                </p>
+                <p class="card__size">
+                    <span class="card__size-title">Размер:</span>
+                    <span class="card__size-value"></span>
+                </p>
+            </div>
+        </div>
+    </li>
+    </template>
 
     <script src="./public/js/script.js" type="module"></script>
 

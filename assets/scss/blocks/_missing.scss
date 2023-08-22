@@ -1,0 +1,17 @@
+.missing {
+    &__list {
+        @include list;
+
+       padding-bottom: rem(20px);
+
+        display: flex;
+        flex-direction: column;
+        row-gap: rem(16px);
+
+        list-style-type: none;
+
+        @media #{$screen-tablet} {
+            row-gap: rem(20px);
+        }
+    }
+}
