@@ -1,0 +1,51 @@
+.vidget {
+    @include list;
+
+    width: rem(540px);
+    height: rem(600px);
+    padding: rem(10px);
+    margin-bottom: rem(20px);
+
+    overflow: hidden;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: rem(10px);
+
+    list-style-type: none;
+
+    background-color: $white;
+    border-radius: rem($border-radius-section); 
+
+    &__item {
+        padding: rem(10px);
+
+        display: flex;
+        flex-direction: column;
+        row-gap: rem(20px);
+
+        border: rem(1px) solid $red-violet;
+        border-radius: rem($border-radius-big);
+    }
+
+    &__attachments {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: rem(5px);
+    }
+
+    &__text {
+        margin: 0;
+    }
+
+    &__stats {
+        display: flex;
+        column-gap: rem(20px);
+
+        padding: rem(5px);
+
+        border: rem(1px) solid $red-violet;
+        border-radius: rem($border-radius-big);
+    }
+}

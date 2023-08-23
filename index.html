@@ -8,7 +8,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script
         src="https://api-maps.yandex.ru/2.1/?apikey=0ef0e76e-4301-4dda-8d2c-cc8db39b6432&suggest_apikey=84660e69-90c0-4ea7-8b56-f2ef3ceab55b&lang=ru_RU"
-        type="text/javascript"></script>
+        type="text/javascript">
+    </script>
+    <script>
+        var script = document.createElement('SCRIPT');
+        script.src =
+            "https://api.vk.com/method/wall.get?owner_id=-34274053&count=100&access_token=vk1.a.CkBKnoz8oFgs6d-lrLDUC0mI6oeJte5iORLyCoePgGFUXQ7m71UB5t2eCtbGx77VsolGdDfakBzZ4d3qIQ7jm_C6DPRWUjkFOOQJeFcR0AMSqLoEkDJc7hvB3aixs0NMjVaM8iYxCy9DDNaq5EH1jZWxwkirLKDIjdIPa8d_B2Dqszt-YmA18ucDuSTKyfhimgh_InB-N2xeeQxHt9u5vg&v=5.131&callback=callbackFunc";
+        document.getElementsByTagName("head")[0].appendChild(script);
+
+        function callbackFunc(result) {
+            const posts = result.response.items;
+            console.log(posts);
+
+            const container = document.createElement('ul');
+            container.classList.add('vidget');
+            document.querySelector('.container__block').appendChild(container);
+            const postTemplate = document.querySelector('#post-template').content
+                .querySelector('.vidget__item');
+            const postFragment = document.createDocumentFragment();
+
+            const postsArray = Array.from(posts);
+
+            postsArray.forEach((post) => {
+                let src;
+                // post.attachments.forEach((attachment) => {
+                //     src = attachment.photo.sizes[0].url;
+                // });
+
+                const postElement = postTemplate.cloneNode(true);
+                postElement.querySelector('.vidget__text').innerText = post.text;
+                postElement.querySelector('.vidget__likes').innerText = post.likes.count;
+                postElement.querySelector('.vidget__comments').innerText = post.comments.count;
+                postFragment.appendChild(postElement);
+            });
+
+            container.appendChild(postFragment);
+        }
+    </script>
     <link rel="stylesheet" type="text/css" href="./public/css/style.css">
 </head>
 
@@ -118,6 +154,21 @@
                         <span class="card__size-value"></span>
                     </p>
                 </div>
+            </div>
+        </li>
+    </template>
+
+    <template id="post-template">
+        <li class="vidget__item">
+            <span class="vidget__date"></span>
+            <div class="vidget__attachments">
+                <!-- <video class="vidget__video" src=""></video>
+                <img class="vidget__img" src="" alt="Фото."> -->
+            </div>
+            <p class="vidget__text"></p>
+            <div class="vidget__stats">
+                <span>Лайки <span class="vidget__likes"></span></span>
+                <span>Комментарии <span class="vidget__comments"></span></span>
             </div>
         </li>
     </template>
