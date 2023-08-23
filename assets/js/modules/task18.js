@@ -1,4 +1,8 @@
 /*
+Подсчитать максимальный объем данных, который можно записать в localStorage вашего браузера.
+*/
+
+/*
 Решение вопроса было взято отсюда:
 https://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage-values 
 

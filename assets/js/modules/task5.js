@@ -1,3 +1,9 @@
+/*
+Разработайте функцию преобразования JSON в связный список. 
+На входе функция должна получать JSON, содержащий список объектов, 
+на выходе объект, представляющий из себя односвязный список.
+*/
+
 //JSON для проверки
 const JSON_LIST = '[{"band": "Depeche Mode","title": "Enjoy The Silence"},{"band": "Depeche Mode","title": "Precious"},{"band": "Depeche Mode","title": "It`s No Good"},{"band": "Depeche Mode","title": "Personal Jesus"}]';
 

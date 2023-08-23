@@ -30,6 +30,7 @@ import {initAddressSuggestion, debounced} from './modules/task17';
 import './modules/task18';
 import './modules/task21';
 import './modules/task25';
+import './modules/task26';
 import './modules/task27';
 import './modules/task28';
 import './modules/task29';

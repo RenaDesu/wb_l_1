@@ -1,3 +1,9 @@
+/*
+Задача: Добавить анимацию для элемента: Напишите функцию, которая 
+добавляет анимацию для элемента на веб-странице, например, 
+плавное изменение его положения или размера.
+*/
+
 const tooltips = document.querySelectorAll('.description__highlight--has-tooltip');
 const slider = document.querySelector('.slider');
 const before = slider.querySelector('.slider__before');
@@ -14,9 +20,6 @@ function onTooltipClick(evt) {
 tooltips.forEach((tooltip) => {
     tooltip.addEventListener('click', onTooltipClick);
 });
-
-
-
 
 
 // и в дополнение Cat slider, был ранее реализован в одном из моих pet-проектов :)
