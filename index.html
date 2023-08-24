@@ -13,12 +13,11 @@
     <script>
         var script = document.createElement('SCRIPT');
         script.src =
-            "https://api.vk.com/method/wall.get?owner_id=-34274053&count=100&access_token=vk1.a.CkBKnoz8oFgs6d-lrLDUC0mI6oeJte5iORLyCoePgGFUXQ7m71UB5t2eCtbGx77VsolGdDfakBzZ4d3qIQ7jm_C6DPRWUjkFOOQJeFcR0AMSqLoEkDJc7hvB3aixs0NMjVaM8iYxCy9DDNaq5EH1jZWxwkirLKDIjdIPa8d_B2Dqszt-YmA18ucDuSTKyfhimgh_InB-N2xeeQxHt9u5vg&v=5.131&callback=callbackFunc";
+            "https://api.vk.com/method/wall.get?owner_id=-51210637&count=100&access_token=vk1.a.kpjISNhXkCrWYHQgThN8nUFMvl_2Ys-iBQzHrXAl1jiIUJuGfi4lyq9XHMeO52q15H_jzP6HC_lqqozun6f-l2u3onKRlUYwiSLFKTWfkqlmEW_DmPLyaJUq6u1mbykXjtnVaWmzrGsnuToyxMBECYNyx_79dbfa_gdzqgo705zixfXF5Bb4EABzeSVmShnFUpkEuZL-FS6_bzY60KSI6w&v=5.131&callback=callbackFunc";
         document.getElementsByTagName("head")[0].appendChild(script);
 
         function callbackFunc(result) {
             const posts = result.response.items;
-            console.log(posts);
 
             const container = document.createElement('ul');
             container.classList.add('vidget');
@@ -29,20 +28,49 @@
 
             const postsArray = Array.from(posts);
 
-            postsArray.forEach((post) => {
-                let src;
-                // post.attachments.forEach((attachment) => {
-                //     src = attachment.photo.sizes[0].url;
-                // });
+            let post_offset = 0;
 
-                const postElement = postTemplate.cloneNode(true);
-                postElement.querySelector('.vidget__text').innerText = post.text;
-                postElement.querySelector('.vidget__likes').innerText = post.likes.count;
-                postElement.querySelector('.vidget__comments').innerText = post.comments.count;
-                postFragment.appendChild(postElement);
+            getPost();
+            getPost();
+            getPost();
+
+            container.addEventListener('scroll', () => {
+
+                if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
+                    showLoading();
+                }
             });
 
-            container.appendChild(postFragment);
+            function showLoading() {
+                if (post_offset < postsArray.length) {
+                    setTimeout(getPost, 1000)
+                }
+            }
+
+            async function getPost() {
+                if (post_offset < postsArray.length) {
+                    addDataToDOM(postsArray[post_offset]);
+                    post_offset++;
+                }
+            }
+
+            function addDataToDOM(data) {
+                const timeStamp = data.date * 1000;
+
+                function timestampToDate(ts) {
+                    var d = new Date();
+                    d.setTime(ts);
+                    return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d
+                        .getFullYear();
+                }
+                const postElement = postTemplate.cloneNode(true);
+                postElement.querySelector('.vidget__date').innerText = timestampToDate(timeStamp);
+                postElement.querySelector('.vidget__text').innerText = data.text;
+                postElement.querySelector('.vidget__likes').innerText = data.likes.count;
+                postElement.querySelector('.vidget__comments').innerText = data.comments.count;
+
+                container.appendChild(postElement);
+            }
         }
     </script>
     <link rel="stylesheet" type="text/css" href="./public/css/style.css">
@@ -161,11 +189,9 @@
     <template id="post-template">
         <li class="vidget__item">
             <span class="vidget__date"></span>
-            <div class="vidget__attachments">
-                <!-- <video class="vidget__video" src=""></video>
-                <img class="vidget__img" src="" alt="Фото."> -->
-            </div>
             <p class="vidget__text"></p>
+            <div class="vidget__attachments">
+            </div>
             <div class="vidget__stats">
                 <span>Лайки <span class="vidget__likes"></span></span>
                 <span>Комментарии <span class="vidget__comments"></span></span>
