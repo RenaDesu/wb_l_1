@@ -29,7 +29,7 @@
 
             const postsArray = Array.from(posts);
             let post_offset = 0;
-   
+
             getPost();
             getPost();
             getPost();
@@ -157,6 +157,15 @@
                         <button class="button" type="submit" id="submit">Выбрать</button>
                         <button class="button" type="reset" id="reset">Очистить</button>
                     </div>
+                </form>
+
+                <h3>Поле ввода пароля, 23 задача</h3>
+                <form class="form" data-password-form action="#" autocomplete="off">
+                    <label data-password-label for="password" style="display: flex; flex-direction: column;">Пароль: 
+                        <input type="password" data-password id="password" style="width: 500px;"> 
+                        <span data-message style="color: red;"></span>
+                    </label>
+                    <button class="button" data-submit-password type="submit" id="submitPassword" style="align-self: flex-start;">Отправить</button>
                 </form>
             </div>
         </div>
