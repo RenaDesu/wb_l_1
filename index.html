@@ -13,7 +13,7 @@
     <script>
         var script = document.createElement('SCRIPT');
         script.src =
-            "https://api.vk.com/method/wall.get?owner_id=-51210637&count=100&access_token=vk1.a.kpjISNhXkCrWYHQgThN8nUFMvl_2Ys-iBQzHrXAl1jiIUJuGfi4lyq9XHMeO52q15H_jzP6HC_lqqozun6f-l2u3onKRlUYwiSLFKTWfkqlmEW_DmPLyaJUq6u1mbykXjtnVaWmzrGsnuToyxMBECYNyx_79dbfa_gdzqgo705zixfXF5Bb4EABzeSVmShnFUpkEuZL-FS6_bzY60KSI6w&v=5.131&callback=callbackFunc";
+            "https://api.vk.com/method/wall.get?owner_id=-51210637&count=100&access_token=vk1.a.hoAc-tBPyb9MXhiBB3MucI_sYj3mZJoBMzEQaGXnA6P4StsS8K85mf2zebSbQiI0iI6XUiYvqYx0pBEmkv_BCQsDsQuNc-4jBVl8uERVHsrRxI8HaAWwpl1DrvSBidxm86g5YWjFQLGw9LCwe_Enrg536o7tahXofd-qaJhMAiv5W0jgmXdLNVor1uwZYG7dAmQf_YIRO2zeUiC9-aePcw&v=5.131&callback=callbackFunc";
         document.getElementsByTagName("head")[0].appendChild(script);
 
         function callbackFunc(result) {
@@ -27,9 +27,8 @@
             const postFragment = document.createDocumentFragment();
 
             const postsArray = Array.from(posts);
-
             let post_offset = 0;
-
+   
             getPost();
             getPost();
             getPost();
@@ -38,18 +37,23 @@
 
                 if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
                     showLoading();
+                    setScroll();
                 }
             });
 
             function showLoading() {
                 if (post_offset < postsArray.length) {
-                    setTimeout(getPost, 1000)
+                    setTimeout(getPost, 1000);
                 }
             }
 
             async function getPost() {
                 if (post_offset < postsArray.length) {
-                    addDataToDOM(postsArray[post_offset]);
+                    localStorage.setItem(`item ${post_offset}`, JSON.stringify(postsArray[post_offset]));
+                    const data = JSON.parse(localStorage.getItem(`item ${post_offset}`));
+
+                    addDataToDOM(data);
+
                     post_offset++;
                 }
             }
