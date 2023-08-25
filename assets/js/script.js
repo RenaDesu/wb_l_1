@@ -31,6 +31,7 @@ import './modules/task18';
 import './modules/task19';
 import './modules/task20';
 import './modules/task21';
+import './modules/task22';
 import './modules/task25';
 import './modules/task26';
 import './modules/task27';
