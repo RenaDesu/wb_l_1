@@ -29,6 +29,7 @@ import {dates} from './modules/task16';
 import {initAddressSuggestion, debounced} from './modules/task17';
 import './modules/task18';
 import './modules/task19';
+import './modules/task20';
 import './modules/task21';
 import './modules/task25';
 import './modules/task26';

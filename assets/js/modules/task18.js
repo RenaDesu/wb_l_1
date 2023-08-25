@@ -9,11 +9,9 @@ https://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage
 https://stackoverflow.com/questions/34245593/html5-localstorage-useful-functions-javascript-typescript
 */
 
-//тестово записываем данные в localStorage.
-localStorage.setItem('hi', 'hello');
-localStorage.setItem('привет', 'здравствуйте');
 /*
-далее делаем тест, который будет тестировать установку все более крупных строк текста 
+Сначала найдем объем незанятой памяти.
+Делаем тест, который будет тестировать установку все более крупных строк текста 
 до тех пор, пока браузер не выдаст исключение. 
 */
 function getLocalStorageMaxSize() {
@@ -35,6 +33,10 @@ function getLocalStorageMaxSize() {
     }
 }
 
+getLocalStorageMaxSize(); //на пустом хранилище выдал 5000 kb
+
+const maxSize = localStorage.getItem('size');
 // результат (раскомментировать для проверки):
-// getLocalStorageMaxSize();
-// console.log(localStorage.getItem('size') + ' kb');
+// console.log(maxSize + ' kb');
+
+export {maxSize};
