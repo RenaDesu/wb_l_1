@@ -19,7 +19,3 @@ function initAddressSuggestion() {
             results: 3, // Максимальное количество показываемых подсказок
         });
 }
-
-export {
-    initAddressSuggestion
-};

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>L1/Table</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" href="./public/css/style.css">
+</head>
+
+<body class="page">
+    <h1 class="page__heading">L1</h1>
+    <header class="page__header header">
+        <div class="container">
+            Header
+        </div>
+    </header>
+
+    <main class="page__content content">
+        <div class="container" data-container>
+            <div class="container__block">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Фамилия</th>
+                            <th>Телефон</th>
+                            <th>Адрес</th>
+                            <th>Город</th>
+                            <th>Штат</th>
+                            <th>Индекс</th>
+                        </tr>
+                    </thead>
+                    <tbody data-table-body>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page__footer footer">
+        <div class="container">
+            Footer
+        </div>
+    </footer>
+
+    <template id="tr-template">
+        <tr data-tr>
+            <td data-name></td>
+            <td data-lastname></td>
+            <td data-tel></td>
+            <td data-address></td>
+            <td data-city></td>
+            <td data-state></td>
+            <td data-zip></td>
+        </tr>
+    </template>
+
+    <script>
+/*
+Разработайте страницу, отображающую таблицу с данными. Данные необходимо подгружать из этого источника.
+
+Требования:
+данные должны загружаться при загрузке страницы
+необходимо реализовать сортировку по убыванию и по возрастанию для всех колонок
+необходимо реализовать клиентскую пагинацию (50 элементов на странице)
+*/
+
+        const tableBody = document.querySelector('[data-table-body]');
+        const trTemplate = document.querySelector('#tr-template').content.querySelector('[data-tr]');
+
+        const getData = () => {
+            //fetch() возвращает промис
+            fetch(
+                    'http://www.filltext.com/?rows=1000&fname=%7BfirstName%7D&lname=%7BlastName%7D&tel=%7Bphone%7Cformat%7D&address=%7BstreetAddress%7D&city=%7Bcity%7D&state=%7BusState%7Cabbr%7D&zip=%7Bzip%7D&pretty=true')
+                .then((response) => {
+                    //делаем проверку на успешность запроса, если все ок, то возвращается объект ответа
+                    if (response.ok) {
+                        return response;
+                    }
+                    /*
+                    если не ок, то бросим исключение:
+                    как только будет брошено исключение, оно переведёт промис 
+                    в состояние завершён с ошибкой, и его можно перехватить в catch, 
+                    чтобы вывести в консоль содержимое ошибки
+                    */
+                    throw new Error(`${response.status} — ${response.statusText}`);
+                })
+                //получаем данные
+                .then(response => response.json())
+                //дальше добавляем данные в разметку
+                .then((data) => {
+
+                    data.forEach((data) => {
+                        const trElement = trTemplate.cloneNode(true);
+                        trElement.querySelector('[data-name]').innerText = data.fname;
+                        trElement.querySelector('[data-lastname]').innerText = data.lname;
+                        trElement.querySelector('[data-tel]').innerText = data.tel;
+                        trElement.querySelector('[data-address]').innerText = data.address;
+                        trElement.querySelector('[data-city]').innerText = data.city;
+                        trElement.querySelector('[data-state]').innerText = data.state;
+                        trElement.querySelector('[data-zip]').innerText = data.zip;
+                        tableBody.appendChild(trElement);
+
+                    });
+                })
+                .catch((error) => console.log(error));
+        };
+
+        getData();
+    </script>
+
+</body>
+
+</html>

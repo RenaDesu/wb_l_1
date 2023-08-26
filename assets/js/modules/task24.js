@@ -1,0 +1,1 @@
+//Решение в теге script в table.html
