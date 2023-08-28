@@ -1,0 +1,9 @@
+.table {
+    padding: rem(5px);
+    margin: rem(5px);
+    border: rem(1px) solid $red-violet;
+   
+    &__head-col {
+        text-align: left;
+    }
+}

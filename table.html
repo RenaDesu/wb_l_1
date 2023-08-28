@@ -20,21 +20,22 @@
     <main class="page__content content">
         <div class="container" data-container>
             <div class="container__block">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Имя</th>
-                            <th>Фамилия</th>
-                            <th>Телефон</th>
-                            <th>Адрес</th>
-                            <th>Город</th>
-                            <th>Штат</th>
-                            <th>Индекс</th>
+                <table class="table">
+                    <thead class="table__head">
+                        <tr class="table__head-row">
+                            <th class="table__head-col">Имя</th>
+                            <th class="table__head-col">Фамилия</th>
+                            <th class="table__head-col">Телефон</th>
+                            <th class="table__head-col">Адрес</th>
+                            <th class="table__head-col">Город</th>
+                            <th class="table__head-col">Штат</th>
+                            <th class="table__head-col">Индекс</th>
                         </tr>
                     </thead>
-                    <tbody data-table-body>
+                    <tbody class="table__body" data-table-body>
                     </tbody>
                 </table>
+                <div class="pagination" data-pagination></div>
             </div>
         </div>
     </main>
@@ -58,7 +59,7 @@
     </template>
 
     <script>
-/*
+        /*
 Разработайте страницу, отображающую таблицу с данными. Данные необходимо подгружать из этого источника.
 
 Требования:
@@ -69,11 +70,13 @@
 
         const tableBody = document.querySelector('[data-table-body]');
         const trTemplate = document.querySelector('#tr-template').content.querySelector('[data-tr]');
+        const paginationContainer = document.querySelector('[data-pagination]');
 
         const getData = () => {
             //fetch() возвращает промис
             fetch(
-                    'http://www.filltext.com/?rows=1000&fname=%7BfirstName%7D&lname=%7BlastName%7D&tel=%7Bphone%7Cformat%7D&address=%7BstreetAddress%7D&city=%7Bcity%7D&state=%7BusState%7Cabbr%7D&zip=%7Bzip%7D&pretty=true')
+                    'http://www.filltext.com/?rows=1000&fname=%7BfirstName%7D&lname=%7BlastName%7D&tel=%7Bphone%7Cformat%7D&address=%7BstreetAddress%7D&city=%7Bcity%7D&state=%7BusState%7Cabbr%7D&zip=%7Bzip%7D&pretty=true'
+                )
                 .then((response) => {
                     //делаем проверку на успешность запроса, если все ок, то возвращается объект ответа
                     if (response.ok) {
@@ -92,18 +95,65 @@
                 //дальше добавляем данные в разметку
                 .then((data) => {
 
-                    data.forEach((data) => {
-                        const trElement = trTemplate.cloneNode(true);
-                        trElement.querySelector('[data-name]').innerText = data.fname;
-                        trElement.querySelector('[data-lastname]').innerText = data.lname;
-                        trElement.querySelector('[data-tel]').innerText = data.tel;
-                        trElement.querySelector('[data-address]').innerText = data.address;
-                        trElement.querySelector('[data-city]').innerText = data.city;
-                        trElement.querySelector('[data-state]').innerText = data.state;
-                        trElement.querySelector('[data-zip]').innerText = data.zip;
-                        tableBody.appendChild(trElement);
+                    let currentPage = 1;
+                    let elementsToDisplay = 50;
 
-                    });
+                    function displayTr(responseData, elementsPerDisplay, page) {
+                        tableBody.innerHTML = '';
+                        page--;
+                        const start = elementsPerDisplay * page;
+                        const end = start + elementsPerDisplay;
+                        const slicedData = responseData.slice(start, end);
+
+                        slicedData.forEach((element) => {
+                            const trElement = trTemplate.cloneNode(true);
+                            trElement.querySelector('[data-name]').innerText = element.fname;
+                            trElement.querySelector('[data-lastname]').innerText = element.lname;
+                            trElement.querySelector('[data-tel]').innerText = element.tel;
+                            trElement.querySelector('[data-address]').innerText = element.address;
+                            trElement.querySelector('[data-city]').innerText = element.city;
+                            trElement.querySelector('[data-state]').innerText = element.state;
+                            trElement.querySelector('[data-zip]').innerText = element.zip;
+                            tableBody.appendChild(trElement);
+                        });
+                    }
+
+                    function showPagination(responseData, elementsPerDisplay) {
+                        const paginationElcount = Math.ceil(responseData.length / elementsPerDisplay);
+                        const ulPAgination = document.createElement('ul');
+                        ulPAgination.classList.add('pagination__list');
+
+                        for (let i = 0; i < paginationElcount; i++) {
+                            const paginationLi = showPaginationButtons(i + 1);
+                            ulPAgination.appendChild(paginationLi);
+                        }
+
+                        paginationContainer.appendChild(ulPAgination);
+                    }
+
+                    function showPaginationButtons(page) {
+                        const li = document.createElement('li');
+                        li.classList.add('pagination__item');
+                        li.innerText = `${page}`;
+
+                        if (currentPage == page) {
+                            li.classList.add('pagination__item--active');
+                        }
+
+                        li.addEventListener('click', () => {
+                            currentPage = page;
+                            displayTr(data, elementsToDisplay, currentPage);
+
+                            const currentLi = document.querySelector('li.pagination__item--active');
+                            currentLi.classList.remove('pagination__item--active');
+                            li.classList.add('pagination__item--active');
+                        });
+
+                        return li;
+                    }
+
+                    displayTr(data, elementsToDisplay, currentPage);
+                    showPagination(data, elementsToDisplay);
                 })
                 .catch((error) => console.log(error));
         };
