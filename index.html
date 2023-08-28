@@ -12,67 +12,101 @@
     </script>
     <script>
         //19я задача:
+        /*
+        access_token в src ниже имеет ограниченный срок действия. 
+        Если необходимо для проверки, то в любое время готова получить свежий 
+        и прислать в телеграм (ну или как удобно будет)
+        */
         var script = document.createElement('SCRIPT');
         script.src =
             "https://api.vk.com/method/wall.get?owner_id=-51210637&count=100&access_token=vk1.a.dnPuASHBdlR1LQOUkA_MID1T4fJt3MxcdcABfmP6vaX7njZOQmv_Y07rSRqToJtS7IJIH1zO4eIwFJlgadWLHPeGaREPNkhNMaazHtTFnywMf8aiyj2e0m4vxlgrzAPUbadbYATDG6tsj6-1rCE1hN7rEUW1xEhGCn3cGA0veVc291kQwBL6VEe9sVQImaCBtRdpXaMN2IvgANvF7UuaWQ&v=5.131&callback=callbackFunc";
         document.getElementsByTagName("head")[0].appendChild(script);
+        /*
+        Способ полчения данных был взят из официальной докумнтации (для случаев кросс-доменных запросов):
+        https://dev.vk.com/ru/api/api-requests
+        Другим способом пока не получилось, но если подольше покопаться, то, возможно, удастся решить эту проблему.
+        С API VK (да и в принципе со сторонними API) работаю впервые, так что немного больше времени нужно.
 
+        Также пока не реализован функционал удаления старых данных постов из localStorage и замещение новыми данными.
+        Нужно чуть больше времени, чтобы разобраться. 
+        Думаю, что тут нужно делать проверку на переполнение localStorage и удалять старые ключи с данными,
+        затем на их место добавлять новые ключи с данными. И думаю, что это все также нужно уложить в getPost() (функция ниже).
+        Очень буду рада рекомендациям и помощи в этой части. Хотелось бы разобраться и уверенней себя чувствовать 
+        при работе с localStorage.
+
+        Еще затруднение вызвал момент: 
+        запоминать позицию скролла (когда пользователь проскроллил до определенной точки)
+        и показывать пользователю прогруженные посты и отправлять скролл в ту точку после
+        обновления страницы.
+        Пробовала запоминать позицию скролла перед обновлением страницы, записывать ее в localStorage, 
+        затем после перезагрузки брать позицию из localStorage и отдавать ее для отправки скролла в эту позицию,
+        но не сработало.
+        */
+        //функция для обработки данных запроса
         function callbackFunc(result) {
+            //берем посты
             const posts = result.response.items;
-
+            //список с карточками постов
             const container = document.createElement('ul');
             container.classList.add('vidget');
+            //добавляем список на страницу
             document.querySelector('.container__block').appendChild(container);
+            //находим шаблон карточки поста
             const postTemplate = document.querySelector('#post-template').content
                 .querySelector('.vidget__item');
-            const postFragment = document.createDocumentFragment();
-
+ 
+            //делаем массив, который содержит объекты постов, чтобы дальше с ним работать
             const postsArray = Array.from(posts);
             let post_offset = 0;
-
+            //далее идет механика с показом постов по скроллу
             getPost();
             getPost();
             getPost();
 
             container.addEventListener('scroll', () => {
-
+                //показываем посты по скроллу
                 if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
                     showLoading();
                 }
             });
-
+            //показываем следующие посты с задержкой в 1 секунду
             function showLoading() {
                 if (post_offset < postsArray.length) {
                     setTimeout(getPost, 1000);
                 }
             }
-
+            //функция показа постов
             async function getPost() {
+                //пока post_offset меньше длины массива с постами, показываем пост один за другим
                 if (post_offset < postsArray.length) {
+                    //записывем данные постов в localStorage
                     localStorage.setItem(`item ${post_offset}`, JSON.stringify(postsArray[post_offset]));
+                    //получаем пост из localStorage
                     const data = JSON.parse(localStorage.getItem(`item ${post_offset}`));
-
+                    //берем данные поста из localStorage и отдаем аргументом в функцию, которая создает карточку поста
                     addDataToDOM(data);
-
+                    //увеличиваем post_offset, чтобы выводить следующий пост при скролле
                     post_offset++;
                 }
             }
-
+            //функция создает карточку поста, за основу берем ранее созданный шаблон
             function addDataToDOM(data) {
+                //преобразуем timeStamp из запроса в миллисекунды (т.к. timeStamp был в секундах)
                 const timeStamp = data.date * 1000;
-
+                //приводим timeStamp к адекватному формату даты dd.mm.yyyy
                 function timestampToDate(ts) {
                     var d = new Date();
                     d.setTime(ts);
                     return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d
                         .getFullYear();
                 }
+                //подставляем дданные из запроса в шаблон
                 const postElement = postTemplate.cloneNode(true);
                 postElement.querySelector('.vidget__date').innerText = timestampToDate(timeStamp);
                 postElement.querySelector('.vidget__text').innerText = data.text;
                 postElement.querySelector('.vidget__likes').innerText = data.likes.count;
                 postElement.querySelector('.vidget__comments').innerText = data.comments.count;
-
+                //добавляем карточку в список с карточками
                 container.appendChild(postElement);
             }
         }
@@ -161,11 +195,12 @@
 
                 <h3>Поле ввода пароля, 23 задача</h3>
                 <form class="form" data-password-form action="#" autocomplete="off">
-                    <label data-password-label for="password" style="display: flex; flex-direction: column;">Пароль: 
-                        <input type="password" data-password id="password" style="width: 500px;"> 
+                    <label data-password-label for="password" style="display: flex; flex-direction: column;">Пароль:
+                        <input type="password" data-password id="password" style="width: 500px;">
                         <span data-message style="color: red;"></span>
                     </label>
-                    <button class="button" data-submit-password type="submit" id="submitPassword" style="align-self: flex-start;">Отправить</button>
+                    <button class="button" data-submit-password type="submit" id="submitPassword"
+                        style="align-self: flex-start;">Отправить</button>
                 </form>
             </div>
         </div>
