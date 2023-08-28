@@ -152,6 +152,10 @@ module.exports = (env, argv) => {
                         from: path.resolve(__dirname, 'index.html'),
                         to: path.resolve(__dirname, 'public')
                     },
+                    {
+                        from: path.resolve(__dirname, 'table.html'),
+                        to: path.resolve(__dirname, 'public')
+                    },
                 ],
             }),
         ]
