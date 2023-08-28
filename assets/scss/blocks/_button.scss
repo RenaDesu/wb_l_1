@@ -15,4 +15,11 @@
     &:active {
         background-color: #cc6abc;
     }
+
+    &--sort {
+        display: inline;
+        margin: 0;
+        margin-left: rem(5px);
+        padding: rem(5px);
+    }
 }

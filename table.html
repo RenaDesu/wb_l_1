@@ -20,16 +20,30 @@
     <main class="page__content content">
         <div class="container" data-container>
             <div class="container__block">
-                <table class="table">
+                <table class="table" data-table>
                     <thead class="table__head">
                         <tr class="table__head-row">
-                            <th class="table__head-col">Имя</th>
-                            <th class="table__head-col">Фамилия</th>
-                            <th class="table__head-col">Телефон</th>
-                            <th class="table__head-col">Адрес</th>
-                            <th class="table__head-col">Город</th>
-                            <th class="table__head-col">Штат</th>
-                            <th class="table__head-col">Индекс</th>
+                            <th class="table__head-col" data-column="fname" data-order="desc">
+                                Имя &#9650
+                            </th>
+                            <th class="table__head-col" data-column="lname" data-order="desc">
+                                Фамилия &#9650
+                            </th>
+                            <th class="table__head-col" data-column="tel" data-order="desc">
+                                Телефон &#9650
+                            </th>
+                            <th class="table__head-col" data-column="address" data-order="desc">
+                                Адрес &#9650
+                            </th>
+                            <th class="table__head-col" data-column="city" data-order="desc">
+                                Город &#9650
+                            </th>
+                            <th class="table__head-col" data-column="state" data-order="desc">
+                                Штат &#9650
+                            </th>
+                            <th class="table__head-col" data-column="zip" data-order="desc">
+                                Индекс &#9650
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="table__body" data-table-body>
@@ -68,9 +82,11 @@
 необходимо реализовать клиентскую пагинацию (50 элементов на странице)
 */
 
+        const table = document.querySelector('[data-table]');
         const tableBody = document.querySelector('[data-table-body]');
         const trTemplate = document.querySelector('#tr-template').content.querySelector('[data-tr]');
         const paginationContainer = document.querySelector('[data-pagination]');
+        const theads = document.querySelectorAll('.table__head-col');
 
         const getData = () => {
             //fetch() возвращает промис
@@ -151,6 +167,28 @@
 
                         return li;
                     }
+
+                    theads.forEach((th) => {
+                        th.addEventListener('click', (e) => {
+                            const target = e.target;
+                            const column = target.dataset.column;
+                            const order = target.dataset.order;
+                            let text = target.innerHTML;
+                            text = text.substring(0, text.length - 1);
+                            if (order == 'desc') {
+                                target.dataset.order = 'asc';
+                                data = data.sort((a, b) => a[column] > b[column] ? 1 : -1);
+                                text += '&#9660';
+                            } else {
+                                target.dataset.order = 'desc';
+                                data = data.sort((a, b) => a[column] < b[column] ? 1 : -1);
+                                text += '&#9650';
+                            }
+                            target.innerHTML = text;
+                            displayTr(data, elementsToDisplay, currentPage);
+                        });
+                    });
+
 
                     displayTr(data, elementsToDisplay, currentPage);
                     showPagination(data, elementsToDisplay);

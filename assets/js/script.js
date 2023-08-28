@@ -35,7 +35,6 @@ import './modules/task20';
 import './modules/task21';
 import './modules/task22';
 import './modules/task23';
-// import {getData} from './modules/task24';
 import './modules/task25';
 import './modules/task26';
 import './modules/task27';
