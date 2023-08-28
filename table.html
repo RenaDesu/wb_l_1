@@ -110,17 +110,23 @@
                 .then(response => response.json())
                 //дальше добавляем данные в разметку
                 .then((data) => {
-
-                    let currentPage = 1;
-                    let elementsToDisplay = 50;
-
+                    //готовим переменные для пагинации
+                    let currentPage = 1; //условная страница, на которой показываются ряды таблицы
+                    let elementsToDisplay = 50; //количество рядов на странице
+                    /*
+                    функция, которая отображает 50 рядов на странице, орезает лишние,
+                    в качестве аргументов примет данные из запроса, кол-во рядов и страницу
+                    */
                     function displayTr(responseData, elementsPerDisplay, page) {
+                        //очищаем содержимое тела таблицы, чтобы 50 рядов не наслаивались на уже существующие 50 рядов
                         tableBody.innerHTML = '';
+                        //для корректного отображения рядов на всех страницах 
                         page--;
                         const start = elementsPerDisplay * page;
                         const end = start + elementsPerDisplay;
+                        //обрезаем массив с данными из запроса
                         const slicedData = responseData.slice(start, end);
-
+                        //создаем ряды с использованием полученных и обрезанных данных из запроса
                         slicedData.forEach((element) => {
                             const trElement = trTemplate.cloneNode(true);
                             trElement.querySelector('[data-name]').innerText = element.fname;
@@ -133,33 +139,48 @@
                             tableBody.appendChild(trElement);
                         });
                     }
-
+                    /*
+                    функция для показа пагинации, принимает аргументами данные 
+                    запроса и заданное кол-ко рядов для показа, чтобы посчитать,
+                    сколько элементов пагинации отобразить на странице
+                    */
                     function showPagination(responseData, elementsPerDisplay) {
+                        //узнаем кол-во эл-тов пагинации (округляеи полученное в бОльшую сторону)
                         const paginationElcount = Math.ceil(responseData.length / elementsPerDisplay);
+                        //создаем список для эл-тов пагинации
                         const ulPAgination = document.createElement('ul');
                         ulPAgination.classList.add('pagination__list');
 
                         for (let i = 0; i < paginationElcount; i++) {
+                            //добавляем эл-ты пагинации в список
                             const paginationLi = showPaginationButtons(i + 1);
                             ulPAgination.appendChild(paginationLi);
                         }
-
+                        //добавляем список пагинации в контейнер с пагинацией и выводим на страницу
                         paginationContainer.appendChild(ulPAgination);
                     }
-
+                    /*
+                    функция для создания эл-тов пагинации, агрументом принимает номер 
+                    страницы и помещат его в innerText эл-та пагинации
+                    */
                     function showPaginationButtons(page) {
                         const li = document.createElement('li');
                         li.classList.add('pagination__item');
                         li.innerText = `${page}`;
-
+                        //добавляем эл-ту пагинации активный класс
                         if (currentPage == page) {
                             li.classList.add('pagination__item--active');
                         }
-
+                        //добавляем обрабочик клика на эл-т пагинации
                         li.addEventListener('click', () => {
+                            //присваиваем currentPage номер активного эл-та пагинации
                             currentPage = page;
+                            /*
+                            вызываем функцию показа рядов таблицы, при каждом нажатии будут добавляться 50 рядов, 
+                            соответствующие каждому своему эл-ту пагинации
+                            */
                             displayTr(data, elementsToDisplay, currentPage);
-
+                            //далее удаляем активный класс у текущего эл-та и присваиваем его следующему
                             const currentLi = document.querySelector('li.pagination__item--active');
                             currentLi.classList.remove('pagination__item--active');
                             li.classList.add('pagination__item--active');
@@ -167,28 +188,44 @@
 
                         return li;
                     }
-
+                    /*
+                    делаем сортировку по возрастанию и убыанию каждого столбца таблицы,
+                    в атрибут data-column заголовков столбцов таблицы в html разметке подставлялись названия свойств данных 
+                    массива объектов, полученного из запроса, чтобы реализовать сортировку
+                    */
                     theads.forEach((th) => {
+                        //на каждый заголовок столбца вещаем обработчик клика
                         th.addEventListener('click', (e) => {
                             const target = e.target;
+                            //определяем колонку и порядок сортировки (по умолчанию убывание)
                             const column = target.dataset.column;
                             const order = target.dataset.order;
-                            let text = target.innerHTML;
-                            text = text.substring(0, text.length - 1);
+                            //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
+                            let text = target.innerText;
+                            text = text.replace(/[^A-Za-zА-Яа-яЁё]/gi, '');
+                            //проверка на порядок сортировки (если в data атрибуте стоит desc, то делаем сортировку по возрастанию)
                             if (order == 'desc') {
                                 target.dataset.order = 'asc';
+                                //сортируем данные из запроса
                                 data = data.sort((a, b) => a[column] > b[column] ? 1 : -1);
+                                //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки   
                                 text += '&#9660';
+                                //проверка на порядок сортировки (если в data атрибуте стоит asc, то делаем сортировку по убыванию)
                             } else {
                                 target.dataset.order = 'desc';
                                 data = data.sort((a, b) => a[column] < b[column] ? 1 : -1);
+                                //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
                                 text += '&#9650';
                             }
+                            //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
                             target.innerHTML = text;
+                            /*
+                            еще раз вызывем функцию с показом рядов таблицы с отсортированными 
+                            данными запроса, чтобы сортировка сработала
+                            */
                             displayTr(data, elementsToDisplay, currentPage);
                         });
                     });
-
 
                     displayTr(data, elementsToDisplay, currentPage);
                     showPagination(data, elementsToDisplay);
