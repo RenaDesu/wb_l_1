@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>L1/Table</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body class="page">
+    <h1 class="page__heading">L1</h1>
+    <header class="page__header header">
+        <div class="container">
+            Header
+        </div>
+    </header>
+
+    <main class="page__content content">
+        <div class="container" data-container>
+            <div class="container__block">
+                <table class="table" data-table>
+                    <thead class="table__head">
+                        <tr class="table__head-row">
+                            <th class="table__head-col" data-column="fname" data-order="desc">
+                                Имя &#9650
+                            </th>
+                            <th class="table__head-col" data-column="lname" data-order="desc">
+                                Фамилия &#9650
+                            </th>
+                            <th class="table__head-col" data-column="tel" data-order="desc">
+                                Телефон &#9650
+                            </th>
+                            <th class="table__head-col" data-column="address" data-order="desc">
+                                Адрес &#9650
+                            </th>
+                            <th class="table__head-col" data-column="city" data-order="desc">
+                                Город &#9650
+                            </th>
+                            <th class="table__head-col" data-column="state" data-order="desc">
+                                Штат &#9650
+                            </th>
+                            <th class="table__head-col" data-column="zip" data-order="desc">
+                                Индекс &#9650
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table__body" data-table-body>
+                    </tbody>
+                </table>
+                <div class="pagination" data-pagination></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page__footer footer">
+        <div class="container">
+            Footer
+        </div>
+    </footer>
+
+    <template id="tr-template">
+        <tr data-tr>
+            <td data-name></td>
+            <td data-lastname></td>
+            <td data-tel></td>
+            <td data-address></td>
+            <td data-city></td>
+            <td data-state></td>
+            <td data-zip></td>
+        </tr>
+    </template>
+
+    <script>
+/*
+Разработайте страницу, отображающую таблицу с данными. Данные необходимо подгружать из этого источника.
+
+Требования:
+данные должны загружаться при загрузке страницы
+необходимо реализовать сортировку по убыванию и по возрастанию для всех колонок
+необходимо реализовать клиентскую пагинацию (50 элементов на странице)
+
+
+Комментарий:
+к сожалению, на gh-pages (использует https) этот функционал не работает, т.к. в запросе идет обращение к
+незащищенному ресурсу www.filltext.com (использует http), выдает ошибку Mixed Content. 
+Но если развернуть проект локально (через liveserver, например), то все работает.
+Если нужно, то готова покопаться и решить эту проблему (если это в принципе реализуемо).
+*/
+
+        const table = document.querySelector('[data-table]');
+        const tableBody = document.querySelector('[data-table-body]');
+        const trTemplate = document.querySelector('#tr-template').content.querySelector('[data-tr]');
+        const paginationContainer = document.querySelector('[data-pagination]');
+        const theads = document.querySelectorAll('.table__head-col');
+
+        const getData = () => {
+            //fetch() возвращает промис
+            fetch(
+                    'http://www.filltext.com/?rows=1000&fname=%7BfirstName%7D&lname=%7BlastName%7D&tel=%7Bphone%7Cformat%7D&address=%7BstreetAddress%7D&city=%7Bcity%7D&state=%7BusState%7Cabbr%7D&zip=%7Bzip%7D&pretty=true'
+                )
+                .then((response) => {
+                    //делаем проверку на успешность запроса, если все ок, то возвращается объект ответа
+                    if (response.ok) {
+                        return response;
+                    }
+                    /*
+                    если не ок, то бросим исключение:
+                    как только будет брошено исключение, оно переведёт промис 
+                    в состояние завершён с ошибкой, и его можно перехватить в catch, 
+                    чтобы вывести в консоль содержимое ошибки
+                    */
+                    throw new Error(`${response.status} — ${response.statusText}`);
+                })
+                //получаем данные
+                .then(response => response.json())
+                //дальше добавляем данные в разметку
+                .then((data) => {
+                    //готовим переменные для пагинации
+                    let currentPage = 1; //условная страница, на которой показываются ряды таблицы
+                    let elementsToDisplay = 50; //количество рядов на странице
+                    /*
+                    функция, которая отображает 50 рядов на странице, орезает лишние,
+                    в качестве аргументов примет данные из запроса, кол-во рядов и страницу
+                    */
+                    function displayTr(responseData, elementsPerDisplay, page) {
+                        //очищаем содержимое тела таблицы, чтобы 50 рядов не наслаивались на уже существующие 50 рядов
+                        tableBody.innerHTML = '';
+                        //для корректного отображения рядов на всех страницах 
+                        page--;
+                        const start = elementsPerDisplay * page;
+                        const end = start + elementsPerDisplay;
+                        //обрезаем массив с данными из запроса
+                        const slicedData = responseData.slice(start, end);
+                        //создаем ряды с использованием полученных и обрезанных данных из запроса
+                        slicedData.forEach((element) => {
+                            const trElement = trTemplate.cloneNode(true);
+                            trElement.querySelector('[data-name]').innerText = element.fname;
+                            trElement.querySelector('[data-lastname]').innerText = element.lname;
+                            trElement.querySelector('[data-tel]').innerText = element.tel;
+                            trElement.querySelector('[data-address]').innerText = element.address;
+                            trElement.querySelector('[data-city]').innerText = element.city;
+                            trElement.querySelector('[data-state]').innerText = element.state;
+                            trElement.querySelector('[data-zip]').innerText = element.zip;
+                            tableBody.appendChild(trElement);
+                        });
+                    }
+                    /*
+                    функция для показа пагинации, принимает аргументами данные 
+                    запроса и заданное кол-ко рядов для показа, чтобы посчитать,
+                    сколько элементов пагинации отобразить на странице
+                    */
+                    function showPagination(responseData, elementsPerDisplay) {
+                        //узнаем кол-во эл-тов пагинации (округляеи полученное в бОльшую сторону)
+                        const paginationElcount = Math.ceil(responseData.length / elementsPerDisplay);
+                        //создаем список для эл-тов пагинации
+                        const ulPAgination = document.createElement('ul');
+                        ulPAgination.classList.add('pagination__list');
+
+                        for (let i = 0; i < paginationElcount; i++) {
+                            //добавляем эл-ты пагинации в список
+                            const paginationLi = showPaginationButtons(i + 1);
+                            ulPAgination.appendChild(paginationLi);
+                        }
+                        //добавляем список пагинации в контейнер с пагинацией и выводим на страницу
+                        paginationContainer.appendChild(ulPAgination);
+                    }
+                    /*
+                    функция для создания эл-тов пагинации, агрументом принимает номер 
+                    страницы и помещат его в innerText эл-та пагинации
+                    */
+                    function showPaginationButtons(page) {
+                        const li = document.createElement('li');
+                        li.classList.add('pagination__item');
+                        li.innerText = `${page}`;
+                        //добавляем эл-ту пагинации активный класс
+                        if (currentPage == page) {
+                            li.classList.add('pagination__item--active');
+                        }
+                        //добавляем обрабочик клика на эл-т пагинации
+                        li.addEventListener('click', () => {
+                            //присваиваем currentPage номер активного эл-та пагинации
+                            currentPage = page;
+                            /*
+                            вызываем функцию показа рядов таблицы, при каждом нажатии будут добавляться 50 рядов, 
+                            соответствующие каждому своему эл-ту пагинации
+                            */
+                            displayTr(data, elementsToDisplay, currentPage);
+                            //далее удаляем активный класс у текущего эл-та и присваиваем его следующему
+                            const currentLi = document.querySelector('li.pagination__item--active');
+                            currentLi.classList.remove('pagination__item--active');
+                            li.classList.add('pagination__item--active');
+                        });
+
+                        return li;
+                    }
+                    /*
+                    делаем сортировку по возрастанию и убыанию каждого столбца таблицы,
+                    в атрибут data-column заголовков столбцов таблицы в html разметке подставлялись названия свойств данных 
+                    массива объектов, полученного из запроса, чтобы реализовать сортировку
+                    */
+                    theads.forEach((th) => {
+                        //на каждый заголовок столбца вещаем обработчик клика
+                        th.addEventListener('click', (e) => {
+                            const target = e.target;
+                            //определяем колонку и порядок сортировки (по умолчанию убывание)
+                            const column = target.dataset.column;
+                            const order = target.dataset.order;
+                            //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
+                            let text = target.innerText;
+                            text = text.replace(/[^A-Za-zА-Яа-яЁё]/gi, '');
+                            //проверка на порядок сортировки (если в data атрибуте стоит desc, то делаем сортировку по возрастанию)
+                            if (order == 'desc') {
+                                target.dataset.order = 'asc';
+                                //сортируем данные из запроса
+                                data = data.sort((a, b) => a[column] > b[column] ? 1 : -1);
+                                //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки   
+                                text += '&#9660';
+                                //проверка на порядок сортировки (если в data атрибуте стоит asc, то делаем сортировку по убыванию)
+                            } else {
+                                target.dataset.order = 'desc';
+                                data = data.sort((a, b) => a[column] < b[column] ? 1 : -1);
+                                //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
+                                text += '&#9650';
+                            }
+                            //это чтобы треугольник переворачивался и показывал пользователю порядок сортировки
+                            target.innerHTML = text;
+                            /*
+                            еще раз вызывем функцию с показом рядов таблицы с отсортированными 
+                            данными запроса, чтобы сортировка сработала
+                            */
+                            displayTr(data, elementsToDisplay, currentPage);
+                        });
+                    });
+
+                    displayTr(data, elementsToDisplay, currentPage);
+                    showPagination(data, elementsToDisplay);
+                })
+                .catch((error) => console.log(error));
+        };
+
+        getData();
+    </script>
+
+</body>
+
+</html>

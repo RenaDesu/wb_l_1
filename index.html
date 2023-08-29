@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>L1</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script
+        src="https://api-maps.yandex.ru/2.1/?apikey=0ef0e76e-4301-4dda-8d2c-cc8db39b6432&suggest_apikey=84660e69-90c0-4ea7-8b56-f2ef3ceab55b&lang=ru_RU"
+        type="text/javascript">
+    </script>
+    <script>
+        //19я задача:
+        /*
+        access_token в src ниже имеет ограниченный срок действия. 
+        Если необходимо для проверки, то в любое время готова получить свежий 
+        и прислать в телеграм (ну или как удобно будет)
+        */
+        var script = document.createElement('SCRIPT');
+        script.src =
+            "https://api.vk.com/method/wall.get?owner_id=-51210637&count=100&access_token=vk1.a.7wj3nXLO4eeV9d1PQIJ-Sxlaw3JASqKHKMpQFvbM_y5c0bvJEOlLrbW10h0RSvD9XW2OJ8yPWqYO91TcJ9HbGWrfj1m-3k27DR7mm0olrd5yF6qJUjcmQeVm4hhbjlB__Cf9-zx6D89Uxw9E4N4lNG0c96XSpIjMXhOMqv-UAf_mFgQC0o8xgalCFTkkq9Um5_TNGENpZ1lTtNPH-XYn8A&v=5.131&callback=callbackFunc";
+        document.getElementsByTagName("head")[0].appendChild(script);
+        /*
+        Способ полчения данных был взят из официальной докумнтации (для случаев кросс-доменных запросов):
+        https://dev.vk.com/ru/api/api-requests
+        Другим способом пока не получилось, но если подольше покопаться, то, возможно, удастся решить эту проблему.
+        С API VK (да и в принципе со сторонними API) работаю впервые, так что немного больше времени нужно.
+        */
+        //функция для обработки данных запроса
+        function callbackFunc(result) {
+            //берем посты
+            const posts = result.response.items;
+            //список с карточками постов
+            const container = document.createElement('ul');
+            container.classList.add('vidget');
+            //добавляем список на страницу
+            document.querySelector('.container__block').appendChild(container);
+            //находим шаблон карточки поста
+            const postTemplate = document.querySelector('#post-template').content
+                .querySelector('.vidget__item');
+
+            //делаем массив, который содержит объекты постов, чтобы дальше с ним работать
+            const postsArray = Array.from(posts);
+            let post_offset = 0;
+            //далее идет механика с показом постов по скроллу
+            getPost();
+            getPost();
+            getPost();
+
+            container.addEventListener('scroll', () => {
+                //показываем посты по скроллу
+                if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) {
+                    showLoading();
+                }
+            });
+            //показываем следующие посты с задержкой в 1 секунду
+            function showLoading() {
+                if (post_offset < postsArray.length) {
+                    setTimeout(getPost, 1000);
+                }
+            }
+            //функция показа постов
+            async function getPost() {
+                //пока post_offset меньше длины массива с постами, показываем пост один за другим
+                if (post_offset < postsArray.length) {
+                    let data;
+                    /*
+                    Ниже try catch для обработки переполнения localStorage.
+                    При переполнении хранилище очищается полностью, чтобы дать место
+                    новым данным. 
+                    А вот как избежать полного очищения хранилища и новыми данными замещать
+                    старые данные постов пока не могу придумать. Буду рада небольшой подсказке,
+                    чтобы работать в нужном направлении.
+                    То есть я пока не понимаю, как находить item 1, затем item 2 и т.д. и перезаписывать
+                    их данные данными, загруженными позже.
+                    Либо надо удалять item 1, затем item 2 и т.д. и создавать новые
+                    ключи с item 101, 102 и т.д.?
+                    Есть понимание, что это все нужно реализовать в рамках текущей 
+                    getPost() функции. Или я ошибаюсь?
+
+                    Еще затруднение вызвал момент: 
+                    запоминать позицию скролла (когда пользователь проскроллил до определенной точки)
+                    и показывать пользователю прогруженные посты и отправлять скролл в ту точку после
+                    обновления страницы.
+                    Пробовала запоминать позицию скролла перед обновлением страницы, записывать ее в localStorage, 
+                    затем после перезагрузки брать позицию из localStorage и отдавать ее для отправки скролла в эту позицию,
+                    но не сработало.
+                    */
+                    try {
+                        //записывем данные постов в localStorage
+                        localStorage.setItem(`item ${post_offset}`, JSON.stringify(postsArray[post_offset]));
+                        //получаем пост из localStorage
+                        data = JSON.parse(localStorage.getItem(`item ${post_offset}`));
+                        //берем данные поста из localStorage и отдаем аргументом в функцию, которая создает карточку поста
+                        addDataToDOM(data);
+                    } catch (e) {
+                        if (e == QUOTA_EXCEEDED_ERR) {
+                            localStorage.clear();
+                        }
+                    }
+
+                    //увеличиваем post_offset, чтобы выводить следующий пост при скролле
+                    post_offset++;
+                }
+            }
+            //функция создает карточку поста, за основу берем ранее созданный шаблон
+            function addDataToDOM(data) {
+                //преобразуем timeStamp из запроса в миллисекунды (т.к. timeStamp был в секундах)
+                const timeStamp = data.date * 1000;
+                //приводим timeStamp к адекватному формату даты dd.mm.yyyy
+                function timestampToDate(ts) {
+                    var d = new Date();
+                    d.setTime(ts);
+                    return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d
+                        .getFullYear();
+                }
+                //подставляем дданные из запроса в шаблон
+                const postElement = postTemplate.cloneNode(true);
+                postElement.querySelector('.vidget__date').innerText = timestampToDate(timeStamp);
+                postElement.querySelector('.vidget__text').innerText = data.text;
+                postElement.querySelector('.vidget__likes').innerText = data.likes.count;
+                postElement.querySelector('.vidget__comments').innerText = data.comments.count;
+                //добавляем карточку в список с карточками
+                container.appendChild(postElement);
+            }
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body class="page">
+    <h1 class="page__heading">L1</h1>
+    <header class="page__header header">
+        <div class="container">
+            Header
+        </div>
+    </header>
+
+    <main class="page__content content">
+        <div class="container" data-container>
+            <div class="container__block">
+                <div class="img-container"> </div>
+                <h3>Поле ввода адреса с функцией геокодинга, 17 задача</h3>
+                <label for="address">Адрес: <input type="text" id="address" style="width: 500px;"> </label>
+
+                <h3>Пример анимации элемента 1, 27 задача</h3>
+                <p class="description">
+                    Пример анимации элемента
+                    <span data-tooltip="Анимированный тултип"
+                        class="description__highlight description__highlight--has-tooltip">
+                        "нажми на меня"
+                    </span>
+                    для 27й
+                    <span data-tooltip="Анимированный тултип 2"
+                        class="description__highlight description__highlight--has-tooltip">
+                        "нажми на меня"
+                    </span>
+                    задачи. По нажатию на <span data-tooltip="Анимированный тултип 3"
+                        class="description__highlight description__highlight--has-tooltip">"нажми на меня"</span>
+                    происходит анимация псевдоэлемента ::after у span
+                    (его текст увеличивается и меняется видимость, после повторного нажатия текст уменьшается
+                    и постепенно менется видимость, он исчезает).
+                </p>
+
+                <h3>Пример анимации элемента 2, 27 задача</h3>
+                <p class="description">Нужно потянуть ползунок вправо, затем влево</p>
+                <div class="container__mini-block">
+                    <div class="page__slider">
+                        <div class="slider">
+                            <div class="slider__before">
+                                <img class="slider__img" src="images/slider-before-tablet.png"
+                                    srcset="images/slider-before-tablet@2x.png 2x" alt="Изображение кота до.">
+                            </div>
+                            <div class="slider__after">
+                                <img class="slider__img" src="images/slider-after-tablet.png"
+                                    srcset="images/slider-after-tablet@2x.png 2x"
+                                    alt="Изображение кота после.">
+                            </div>
+                            <div class="slider__change-bar">
+                                <div class="slider__change-bar-arrows">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Нажмите на кнопку ниже, 28 задача</h3>
+                <button class="button" style="align-self: flex-start;" type="button" data-show>Добавить
+                    продукты</button>
+                <ul class="missing__list" data-product-list></ul>
+
+                <h3>Заполните форму и нажмите "Выбрать", 29 задача</h3>
+                <form class="form" data-form enctype="multipart/form-data" autocomplete="off">
+                    <label class="form__label" for="name">Имя</label>
+                    <input class="form__input" type="text" name="name" id="name">
+                    <label class="form__label" for="surename">Фамилия</label>
+                    <input class="form__input" type="text" name="surename" id="surename">
+                    <label class="form__label" for="favorite">Любимый продукт</label>
+                    <select class="form__select" name="favorite" id="favorite" data-select>
+                        <option value="fish">рыба</option>
+                        <option value="chicken">курица</option>
+                        <option value="beaf">говядина</option>
+                    </select>
+                    <div class="form__buttons">
+                        <button class="button" type="submit" id="submit">Выбрать</button>
+                        <button class="button" type="reset" id="reset">Очистить</button>
+                    </div>
+                </form>
+
+                <h3>Поле ввода пароля, 23 задача</h3>
+                <form class="form" data-password-form action="#" autocomplete="off">
+                    <label data-password-label for="password" style="display: flex; flex-direction: column;">Пароль:
+                        <input type="password" data-password id="password" style="width: 500px;">
+                        <span data-message style="color: red;"></span>
+                    </label>
+                    <button class="button" data-submit-password type="submit" id="submitPassword"
+                        style="align-self: flex-start;">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page__footer footer">
+        <div class="container">
+            Footer
+        </div>
+    </footer>
+
+    <template id="product-list-template">
+        <li class="missing__item card card--missing">
+            <div class="card__img">
+                <img class="card__img-pic card__img-pic--missing" src="" srcset="" alt="Изображение товара">
+            </div>
+            <div class="card__content">
+                <p class="card__title">
+                </p>
+                <div class="card__characteristics">
+                    <p class="card__color">
+                        Цвет:
+                        <span class="card__color-value"></span>
+                    </p>
+                    <p class="card__size">
+                        <span class="card__size-title">Размер:</span>
+                        <span class="card__size-value"></span>
+                    </p>
+                </div>
+            </div>
+        </li>
+    </template>
+
+    <template id="post-template">
+        <li class="vidget__item">
+            <span class="vidget__date"></span>
+            <p class="vidget__text"></p>
+            <div class="vidget__attachments">
+            </div>
+            <div class="vidget__stats">
+                <span>Лайки <span class="vidget__likes"></span></span>
+                <span>Комментарии <span class="vidget__comments"></span></span>
+            </div>
+        </li>
+    </template>
+
+    <script src="js/script.js" type="module"></script>
+
+</body>
+
+</html>
